@@ -8,19 +8,22 @@
 import SwiftUI
 
 struct LandmarkList: View {
-    @State private var showFavoritesOnly: Bool = false
+    @Environment(ModelData.self) var modelData
+    @State private var showFavoritesOnly = false
 
     var filteredLandmarks: [Landmark] {
-        landmarks.filter { landmark in
+        modelData.landmarks.filter { landmark in
             (!showFavoritesOnly || landmark.isFavorite)
         }
     }
+    
     var body: some View {
         NavigationSplitView {
             List {
                 Toggle(isOn: $showFavoritesOnly) {
                     Text("Show Favorites Only")
                 }
+                
                 ForEach(filteredLandmarks) { landmark in
                     NavigationLink {
                         LandmarkDetail(landmark: landmark)
@@ -30,6 +33,7 @@ struct LandmarkList: View {
                 }
             }
             .animation(.default, value:filteredLandmarks)
+            .navigationBarTitle("Landmarks")
         } detail: {
             Text("Select a Landmark")
         }
@@ -38,4 +42,5 @@ struct LandmarkList: View {
 
 #Preview {
     LandmarkList()
+        .environment(ModelData())
 }
